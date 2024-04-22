@@ -3,6 +3,7 @@ import unittest
 from utils.PorteSpy import PorteSpy
 from utils.LecteurFake import LecteurFake
 from MoteurOuverture import MoteurOuverture
+from utils.badge import Badge
 
 
 class ControlAccess(unittest.TestCase):
@@ -133,3 +134,22 @@ class ControlAccess(unittest.TestCase):
 
         # ALORS un seul signal d'ouverture est envoyé à la Porte
         self.assertEqual(1, porte.nombre_ouverture_demandees)
+
+    def test_badge_bloque(self):
+        # ETANT DONNE une Porte reliée à un lecteur, ayant détécté un badge bloqué
+        porte = PorteSpy()
+        lecteur = LecteurFake()
+        badge = Badge()
+
+        moteurOuverture = MoteurOuverture()
+        moteurOuverture.bloquer(badge)
+        moteurOuverture.associer(lecteur, porte)
+
+        lecteur.simuler_detection_badge()
+
+        # QUAND le Moteur d'Ouverture effectue une interrogation des lecteurs
+        moteurOuverture.interroger()
+
+        # ALORS aucun signal d'ouverture n'est envoyé à la Porte
+        self.assertFalse(porte.ouverture_demandee)
+        self.assertEqual(0, porte.nombre_ouverture_demandees)
