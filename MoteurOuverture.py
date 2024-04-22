@@ -1,17 +1,24 @@
-from dataclasses import dataclass, field
-from typing import Dict
+from dataclasses import dataclass
 from utils.ILecteur import ILecteur
 from utils.IPorte import IPorte
+from association_lecteur_porte import AssociationsLecteurPorte, Lecteur
+from typing import Iterable, Set
+
 
 @dataclass
 class MoteurOuverture:
-    _associations: Dict[ILecteur, IPorte] = field(default_factory=dict)
+    _associations: AssociationsLecteurPorte = AssociationsLecteurPorte()
 
     def interroger(self):
-        for lecteur, porte in self._associations.items():
-            if lecteur.badge_detecte():
-                porte.ouvrir()
+        lecteurs: Iterable[Lecteur] = self._associations.lecteurs_ayant_detecte_un_badge
+        portesAOuvrir: Set[IPorte] = set()
+
+        for lecteur in lecteurs:
+            for porte in lecteur.portes:
+                portesAOuvrir.add(porte)
+
+        for porte in portesAOuvrir:
+            porte.ouvrir()
 
     def associer(self, lecteur: ILecteur, porte: IPorte):
-        self._associations[lecteur] = porte
-
+        self._associations.enregistrer(lecteur, porte)

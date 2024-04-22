@@ -94,3 +94,23 @@ class ControlAccess(unittest.TestCase):
         # ALORS seule la Porte reliée au Lecteur reçoit le signal d'ouverture
         self.assertFalse(porteDevantResterFermee.ouverture_demandee)
         self.assertTrue(porteDevantSOuvrir.ouverture_demandee)
+
+    def test_2_lecteurs(self):
+        # ETANT DONNE une Porte reliée à deux Lecteurs, ayant tous les deux détecté un Badge
+        porte = PorteSpy()
+
+        lecteur1 = LecteurFake()
+        lecteur1.simuler_detection_badge()
+
+        lecteur2 = LecteurFake()
+        lecteur2.simuler_detection_badge()
+
+        moteurOuverture = MoteurOuverture()
+        moteurOuverture.associer(lecteur1, porte)
+        moteurOuverture.associer(lecteur2, porte)
+
+        # QUAND le Moteur d'Ouverture effectue une interrogation des lecteurs
+        moteurOuverture.interroger()
+
+        # ALORS un seul signal d'ouverture est envoyé à la Porte
+        self.assertEqual(1, porte.nombre_ouverture_demandees)
