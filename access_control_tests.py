@@ -142,10 +142,10 @@ class ControlAccess(unittest.TestCase):
         badge = Badge()
 
         moteurOuverture = MoteurOuverture()
-        moteurOuverture.bloquer(badge)
+        moteurOuverture.bloquer_badge(badge)
         moteurOuverture.associer(lecteur, porte)
 
-        lecteur.simuler_detection_badge()
+        lecteur.simuler_detection_badge(badge)
 
         # QUAND le Moteur d'Ouverture effectue une interrogation des lecteurs
         moteurOuverture.interroger()

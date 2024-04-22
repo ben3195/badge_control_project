@@ -5,8 +5,9 @@ from utils.ILecteur import ILecteur
 
 
 class Lecteur:
-    def __init__(self, portes: Iterable[IPorte]):
+    def __init__(self, portes: Iterable[IPorte], badge_detecte: int | None):
         self.portes = portes
+        self.badge_detecte = badge_detecte
 
 
 class AssociationsLecteurPorte:
@@ -19,7 +20,7 @@ class AssociationsLecteurPorte:
             badge_detecte = lecteur.badge_detecte()
             if badge_detecte is not None:
                 continue
-            yield Lecteur(portes)
+            yield Lecteur(portes, badge_detecte)
 
     def enregistrer(self, lecteur: ILecteur, porte: IPorte):
         self._associations.add((lecteur, porte))
