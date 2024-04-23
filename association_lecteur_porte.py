@@ -18,7 +18,7 @@ class AssociationsLecteurPorte:
         groupes: Dict[ILecteur, Iterable[IPorte]] = self._group_associations()
         for lecteur, portes in groupes.items():
             badge_detecte = lecteur.badge_detecte()
-            if badge_detecte is not None:
+            if badge_detecte is None:
                 continue
             yield Lecteur(portes, badge_detecte)
 

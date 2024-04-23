@@ -17,7 +17,7 @@ class LecteurFake(ILecteur):
         return self._dernier_badge
 
     def simuler_detection_badge(self, badge: Badge):
-        if badge is not None and badge.numero is None:
+        if badge is not None and badge.numero is not None:
             self._dernier_badge = badge.numero
         else:
             self._dernier_badge = None
@@ -26,4 +26,4 @@ class LecteurFake(ILecteur):
         return self.id == other.id
 
     def __hash__(self):
-        return hash(object())
+        return hash(self.id)

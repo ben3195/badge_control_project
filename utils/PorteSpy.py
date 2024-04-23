@@ -6,7 +6,6 @@ from .IPorte import IPorte
 class PorteSpy(IPorte):
     porte_count = 0
     id: int
-    ouverture_demandee: bool = False
     nombre_ouverture_demandees: int = 0
 
     def __init__(self):
@@ -14,11 +13,10 @@ class PorteSpy(IPorte):
         self.id = PorteSpy.porte_count
 
     def ouvrir(self):
-        self.ouverture_demandee = True
         self.nombre_ouverture_demandees += 1
 
     def __eq__(self, other: 'PorteSpy'):
         return self.id == other.id
 
     def __hash__(self):
-        return hash(object())
+        return hash(self.id)

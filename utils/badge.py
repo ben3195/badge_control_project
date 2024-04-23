@@ -14,4 +14,4 @@ class Badge:
         return self.numero == other.numero
 
     def __hash__(self):
-        return hash(object())
+        return hash(self.numero)
