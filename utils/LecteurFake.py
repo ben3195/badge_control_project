@@ -1,29 +1,24 @@
 from dataclasses import dataclass
 from .ILecteur import ILecteur
-from .badge import Badge
-
 
 @dataclass
 class LecteurFake(ILecteur):
-    lecteur_count = 0
-    id: int
-    _dernier_badge: int | None = None
-
     def __init__(self):
-        LecteurFake.lecteur_count += 1
-        self.id = LecteurFake.lecteur_count
+        self._détectionSimulée = False
+        self.id = id(self) 
 
-    def badge_detecte(self) -> int | None:
-        return self._dernier_badge
+    def badge_detecte(self) -> bool:
+        returnedValue = self._détectionSimulée
+        self._détectionSimulée = False
+        return returnedValue
 
-    def simuler_detection_badge(self, badge: Badge):
-        if badge is not None and badge.numero is None:
-            self._dernier_badge = badge.numero
-        else:
-            self._dernier_badge = None
-                
-    def __eq__(self, other: 'LecteurFake'):
-        return self.id == other.id
+    def simuler_detection_badge(self):
+        self._détectionSimulée = True
+
+    def __eq__(self, other):
+        if isinstance(other, LecteurFake):
+            return self.id == other.id
+        return False
 
     def __hash__(self):
-        return hash(object())
+        return hash(self.id)

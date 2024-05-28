@@ -19,8 +19,7 @@ class AssociationsLecteurPorte:
         for lecteur, portes in groupes.items():
             badge_detecte = lecteur.badge_detecte()
             if badge_detecte is not None:
-                continue
-            yield Lecteur(portes, badge_detecte)
+                yield Lecteur(portes, badge_detecte)
 
     def enregistrer(self, lecteur: ILecteur, porte: IPorte):
         self._associations.add((lecteur, porte))

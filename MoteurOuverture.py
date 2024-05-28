@@ -1,10 +1,9 @@
 from dataclasses import dataclass, field
+from typing import Iterable, Set
 from utils.ILecteur import ILecteur
 from utils.IPorte import IPorte
-from association_lecteur_porte import AssociationsLecteurPorte, Lecteur
-from typing import Iterable, Set
-
 from utils.badge import Badge
+from association_lecteur_porte import AssociationsLecteurPorte, Lecteur
 
 
 @dataclass
@@ -19,9 +18,8 @@ class MoteurOuverture:
         for lecteur in lecteurs:
             if lecteur.badge_detecte in self._liste_noire:
                 return
-            else:
-                for porte in lecteur.portes:
-                    portesAOuvrir.add(porte)
+            for porte in lecteur.portes:
+                portesAOuvrir.add(porte)
 
         for porte in portesAOuvrir:
             porte.ouvrir()
