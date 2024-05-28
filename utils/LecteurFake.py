@@ -5,7 +5,7 @@ from .ILecteur import ILecteur
 class LecteurFake(ILecteur):
     def __init__(self):
         self._détectionSimulée = False
-        self.id = id(self) 
+        self.id = id(self)
 
     def badge_detecte(self) -> bool:
         returnedValue = self._détectionSimulée

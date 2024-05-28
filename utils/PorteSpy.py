@@ -10,7 +10,7 @@ class PorteSpy(IPorte):
 
     @property
     def ouverture_demandee(self):
-        return  self.nombre_ouverture_demandees
+        return  self.nombre_ouverture_demandees > 0
 
     def ouvrir(self):
         self.nombre_ouverture_demandees += 1

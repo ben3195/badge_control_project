@@ -50,7 +50,7 @@ class ControlAccess(unittest.TestCase):
         self.assertFalse(porte.ouverture_demandee)
 
     def test_cas_2_portes(self):
-        # ETANT DONNE deux Portes reliée à un Lecteur, ayant détecté un Badge
+        # ETANT DONNE deux Portes reliées à un Lecteur, ayant détecté un Badge
         porte1 = PorteSpy()
         porte2 = PorteSpy()
         lecteur = LecteurFake()
@@ -70,16 +70,17 @@ class ControlAccess(unittest.TestCase):
 
     def test_deux_portes(self):
         # ETANT DONNE un Lecteur ayant détecté un Badge
+        lecteurAyantDetecte = LecteurFake()
+        lecteurAyantDetecte.simuler_detection_badge()
+
         # ET un autre Lecteur n'ayant rien détecté
+        lecteurNAyantPasDetecte = LecteurFake()
+
         # ET une Porte reliée chacune à un Lecteur
         porteDevantSOuvrir = PorteSpy()
         porteDevantResterFermee = PorteSpy()
 
-        lecteurAyantDetecte = LecteurFake()
-        lecteurAyantDetecte.simuler_detection_badge()
-
-        lecteurNAyantPasDetecte = LecteurFake()
-
+        # Associer chaque lecteur à sa porte respective
         moteur_ouverture = MoteurOuverture()
         moteur_ouverture.associer(lecteurAyantDetecte, porteDevantSOuvrir)
         moteur_ouverture.associer(lecteurNAyantPasDetecte, porteDevantResterFermee)
@@ -87,7 +88,7 @@ class ControlAccess(unittest.TestCase):
         # QUAND le Moteur d'Ouverture effectue une interrogation des lecteurs
         moteur_ouverture.interroger()
 
-        # ALORS seule la Porte reliée au Lecteur reçoit le signal d'ouverture
+        # ALORS seule la Porte reliée au Lecteur ayant détecté un badge reçoit le signal d'ouverture
         self.assertFalse(porteDevantResterFermee.ouverture_demandee)
         self.assertTrue(porteDevantSOuvrir.ouverture_demandee)
 
