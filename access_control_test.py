@@ -2,6 +2,7 @@ import unittest
 
 from utils.PorteSpy import PorteSpy
 from utils.LecteurFake import LecteurFake
+from utils.Badge import Badge
 from MoteurOuverture import MoteurOuverture
 
 
@@ -135,23 +136,21 @@ class ControlAccess(unittest.TestCase):
         # ALORS un seul signal d'ouverture est envoyé à la Porte
         self.assertEqual(1, porte.nombre_ouverture_demandees)
 
-    # def test_badge_bloque(self):
-    #     # ETANT DONNE une Porte reliée à un lecteur, ayant détécté un badge bloqué
-    #     porte = PorteSpy()
-    #     lecteur = LecteurFake()
+    def test_badge_bloque(self):
+        # ETANT DONNE une Porte reliée à un lecteur, ayant détécté un badge bloqué
+        porte = PorteSpy()
+        lecteur = LecteurFake()
+        badge = Badge()
 
-    #     moteur_ouverture = MoteurOuverture()
-    #     moteur_ouverture.bloquer_badge()
-    #     moteur_ouverture.associer(lecteur, porte)
+        moteur_ouverture = MoteurOuverture()
+        moteur_ouverture.bloquer_badge(badge)
+        moteur_ouverture.associer(lecteur, porte)
 
-    #     lecteur.simuler_detection_badge()
+        lecteur.simuler_detection_badge()
 
-    #     # QUAND le Moteur d'Ouverture effectue une interrogation des lecteurs
-    #     moteur_ouverture.interroger()
+        # QUAND le Moteur d'Ouverture effectue une interrogation des lecteurs
+        moteur_ouverture.interroger()
 
-    #     # ALORS aucun signal d'ouverture n'est envoyé à la Porte
-    #     self.assertFalse(porte.ouverture_demandee)
-    #     self.assertEqual(0, porte.nombre_ouverture_demandees)
-
-if __name__ == '__main__':
-    unittest.main()
+        # ALORS aucun signal d'ouverture n'est envoyé à la Porte
+        self.assertFalse(porte.ouverture_demandee)
+        self.assertEqual(0, porte.nombre_ouverture_demandees)

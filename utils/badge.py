@@ -1,17 +1,7 @@
-from dataclasses import dataclass
+import itertools
 
-
-@dataclass
 class Badge:
-    badge_count = 0
-    numero: int
+    numero = itertools.count(1)
 
     def __init__(self):
-        Badge.badge_count += 1
-        self.numero = Badge.badge_count
-
-    def __eq__(self, other: 'Badge'):
-        return self.numero == other.numero
-
-    def __hash__(self):
-        return hash(object())
+        self.numero = next(self.numero)

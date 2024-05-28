@@ -1,7 +1,7 @@
 from typing import Iterable, Set
 from utils.ILecteur import ILecteur
 from utils.IPorte import IPorte
-from utils.badge import Badge
+from utils.Badge import Badge
 from association_lecteur_porte import AssociationsLecteurPorte, Lecteur
 
 class MoteurOuverture:
