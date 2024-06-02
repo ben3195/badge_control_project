@@ -47,6 +47,6 @@ class MoteurOuverture:
         if badge.numero not in self._regles_acces:
             return False
         for rule in self._regles_acces[badge.numero]:
-            if not rule.is_valid():
-                return False
-        return True
+            if rule.is_valid():
+                return True
+        return False

@@ -320,3 +320,25 @@ class ControlAccess(unittest.TestCase):
 
         # ALORS le signal d'ouverture est envoyé à la porte
         self.assertTrue(porte.nombre_ouverture_demandees > 0)
+
+    def test_plusieurs_regles_de_restrctions_temps(self):
+        # ETANT DONNE une Porte reliée à un Lecteur, ayant détecté un Badge avec une restriction de temps
+        # ET une règle de temps de restriction de temps non respectée
+        # ET une règle de temps de restriction de temps respectée
+        porte = PorteSpy()
+        lecteur = LecteurFake()
+        badge = Badge()
+        current_time = time(12, 0)
+
+        lecteur.simuler_detection_badge(badge)
+
+        moteurOuverture = MoteurOuverture()
+        moteurOuverture.associer(lecteur, porte)
+        moteurOuverture.ajouter_regle(badge.numero, RegleAccesTemps(time(9,0), time(11,0), current_time))
+        moteurOuverture.ajouter_regle(badge.numero, RegleAccesTemps(time(12, 0), time(14,0), current_time))
+
+        # QUAND le Moteur d'Ouverture effectue une interrogation des lecteurs
+        moteurOuverture.interroger()
+
+        # ALORS le signal d'ouverture est envoyé à la porte
+        self.assertTrue(porte.nombre_ouverture_demandees > 0)

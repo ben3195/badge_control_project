@@ -26,4 +26,4 @@ class RegleAccesTemps(RegleDeBase):
         self.current_time = current_time
 
     def is_valid(self) -> bool:
-        return self.start_time <= self.current_time <= self.end_time
+        return self.current_time >= self.start_time and  self.current_time <= self.end_time
