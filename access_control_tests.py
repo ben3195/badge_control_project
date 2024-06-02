@@ -200,3 +200,22 @@ class ControlAccess(unittest.TestCase):
 
         # ALORS le signal d'ouverture n'est pas envoyé à la porte
         self.assertFalse(porte.nombre_ouverture_demandees > 0)
+
+    def test_badge_passe_partout_bloque(self):
+        # ETANT DONNE une Porte reliée à un Lecteur, ayant détecté un Badge passe-partout bloqué
+        porte = PorteSpy()
+        lecteur = LecteurFake()
+        master_badge = Badge(pass_all=True)
+
+        lecteur.simuler_detection_badge(master_badge)
+
+        moteurOuverture = MoteurOuverture()
+        moteurOuverture.associer(lecteur, porte)
+        moteurOuverture.bloquer_badge(master_badge)
+
+        # QUAND le Moteur d'Ouverture effectue une interrogation des lecteurs
+        moteurOuverture.interroger()
+
+        # ALORS le signal d'ouverture n'est pas envoyé à la porte
+        self.assertFalse(porte.nombre_ouverture_demandees > 0)
+
