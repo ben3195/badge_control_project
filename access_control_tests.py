@@ -4,8 +4,8 @@ from utils.PorteSpy import PorteSpy
 from utils.LecteurFake import LecteurFake
 from MoteurOuverture import MoteurOuverture
 from utils.badge import Badge
-from utils.access_rules import RegleAccesParDefaut
-
+from utils.access_rules import RegleAccesParDefaut, RegleAccesTemps
+from datetime import datetime, time
 
 class ControlAccess(unittest.TestCase):
     def test_nominal(self):
@@ -239,3 +239,19 @@ class ControlAccess(unittest.TestCase):
         # ALORS le signal d'ouverture est envoyé aux deux portes
         self.assertTrue(porte1.nombre_ouverture_demandees > 0)
         self.assertTrue(porte2.nombre_ouverture_demandees > 0)
+
+    def test_badge_avec_restriction_temps(self):
+        porte = PorteSpy()
+        lecteur = LecteurFake()
+        badge = Badge()
+        current_time = time(12,00)
+
+        lecteur.simuler_detection_badge(badge)
+
+        moteurOuverture = MoteurOuverture()
+        moteurOuverture.associer(lecteur, porte)
+        moteurOuverture.ajouter_regle(badge.numero, RegleAccesTemps(time(9,00), time(17,00), current_time))
+
+        moteurOuverture.interroger()
+
+        self.assertTrue(porte.nombre_ouverture_demandees > 0)
