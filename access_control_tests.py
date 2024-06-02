@@ -184,3 +184,19 @@ class ControlAccess(unittest.TestCase):
         # ALORS le signal d'ouverture est envoyé à la porte
         self.assertTrue(porte.nombre_ouverture_demandees > 0)
 
+    def test_badge_normal_sans_regles_acces(self):
+        # ETANT DONNE une Porte reliée à un Lecteur, ayant détecté un Badge normal sans régles d'accès
+        porte = PorteSpy()
+        lecteur = LecteurFake()
+        non_master_badge = Badge()
+
+        lecteur.simuler_detection_badge(non_master_badge)
+
+        moteurOuverture = MoteurOuverture()
+        moteurOuverture.associer(lecteur, porte)
+
+        # QUAND le Moteur d'Ouverture effectue une interrogation des lecteurs
+        moteurOuverture.interroger()
+
+        # ALORS le signal d'ouverture n'est pas envoyé à la porte
+        self.assertFalse(porte.nombre_ouverture_demandees > 0)
