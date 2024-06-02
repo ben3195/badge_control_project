@@ -7,18 +7,18 @@ from .badge import Badge
 class LecteurFake(ILecteur):
     lecteur_count = 0
     id: int
-    _dernier_badge: int | None = None
+    _dernier_badge: Badge | None = None
 
     def __init__(self):
         LecteurFake.lecteur_count += 1
         self.id = LecteurFake.lecteur_count
 
-    def badge_detecte(self) -> int | None:
+    def badge_detecte(self) -> Badge | None:
         return self._dernier_badge
 
     def simuler_detection_badge(self, badge: Badge):
         if badge is not None and badge.numero is not None:
-            self._dernier_badge = badge.numero
+            self._dernier_badge = badge
         else:
             self._dernier_badge = None
                 

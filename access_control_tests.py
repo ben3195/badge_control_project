@@ -4,6 +4,7 @@ from utils.PorteSpy import PorteSpy
 from utils.LecteurFake import LecteurFake
 from MoteurOuverture import MoteurOuverture
 from utils.badge import Badge
+from utils.access_rules import RegleAccesParDefaut
 
 
 class ControlAccess(unittest.TestCase):
@@ -17,6 +18,7 @@ class ControlAccess(unittest.TestCase):
 
         moteurOuverture = MoteurOuverture()
         moteurOuverture.associer(lecteur, porte)
+        moteurOuverture.ajouter_regle(badge.numero, RegleAccesParDefaut())
 
         # QUAND le Moteur d'Ouverture effectue une interrogation des lecteurs
         moteurOuverture.interroger()
@@ -34,6 +36,7 @@ class ControlAccess(unittest.TestCase):
 
         moteurOuverture = MoteurOuverture()
         moteurOuverture.associer(lecteur, porte)
+        moteurOuverture.ajouter_regle(badge.numero, RegleAccesParDefaut())
 
         # ALORS le signal d'ouverture n'est pas envoyé à la porte
         self.assertFalse(porte.nombre_ouverture_demandees > 0)
@@ -64,6 +67,7 @@ class ControlAccess(unittest.TestCase):
         moteurOuverture = MoteurOuverture()
         moteurOuverture.associer(lecteur, porte1)
         moteurOuverture.associer(lecteur, porte2)
+        moteurOuverture.ajouter_regle(badge.numero, RegleAccesParDefaut())
 
         # QUAND le Moteur d'Ouverture effectue une interrogation des lecteurs
         moteurOuverture.interroger()
@@ -88,6 +92,7 @@ class ControlAccess(unittest.TestCase):
         moteurOuverture = MoteurOuverture()
         moteurOuverture.associer(lecteurAyantDetecte, porteDevantSOuvrir)
         moteurOuverture.associer(lecteurNAyantPasDetecte, porteDevantResterFermee)
+        moteurOuverture.ajouter_regle(badge.numero, RegleAccesParDefaut())
 
         # QUAND le Moteur d'Ouverture effectue une interrogation des lecteurs
         moteurOuverture.interroger()
@@ -95,6 +100,7 @@ class ControlAccess(unittest.TestCase):
         # ALORS seule la Porte reliée au Lecteur reçoit le signal d'ouverture
         self.assertFalse(porteDevantResterFermee.nombre_ouverture_demandees > 0)
         self.assertTrue(porteDevantSOuvrir.nombre_ouverture_demandees > 0)
+
     def test_deux_portes_inverse(self):
         # ETANT DONNE un Lecteur ayant détecté un Badge
         # ET un autre Lecteur n'ayant rien détecté
@@ -111,6 +117,7 @@ class ControlAccess(unittest.TestCase):
         moteurOuverture = MoteurOuverture()
         moteurOuverture.associer(lecteurNAyantPasDetecte, porteDevantResterFermee)
         moteurOuverture.associer(lecteurAyantDetecte, porteDevantSOuvrir)
+        moteurOuverture.ajouter_regle(badge.numero, RegleAccesParDefaut())
 
         # QUAND le Moteur d'Ouverture effectue une interrogation des lecteurs
         moteurOuverture.interroger()
@@ -133,6 +140,7 @@ class ControlAccess(unittest.TestCase):
         moteurOuverture = MoteurOuverture()
         moteurOuverture.associer(lecteur1, porte)
         moteurOuverture.associer(lecteur2, porte)
+        moteurOuverture.ajouter_regle(badge.numero, RegleAccesParDefaut())
 
         # QUAND le Moteur d'Ouverture effectue une interrogation des lecteurs
         moteurOuverture.interroger()
@@ -151,9 +159,28 @@ class ControlAccess(unittest.TestCase):
         moteurOuverture.associer(lecteur, porte)
 
         lecteur.simuler_detection_badge(badge)
+        moteurOuverture.ajouter_regle(badge.numero, RegleAccesParDefaut())
 
         # QUAND le Moteur d'Ouverture effectue une interrogation des lecteurs
         moteurOuverture.interroger()
 
         # ALORS aucun signal d'ouverture n'est envoyé à la Porte
         self.assertEqual(0, porte.nombre_ouverture_demandees)
+
+    def test_badge_passe_partout(self):
+        # ETANT DONNE une Porte reliée à un Lecteur, ayant détecté un Badge passe-partout
+        porte = PorteSpy()
+        lecteur = LecteurFake()
+        master_badge = Badge(pass_all=True)
+
+        lecteur.simuler_detection_badge(master_badge)
+
+        moteurOuverture = MoteurOuverture()
+        moteurOuverture.associer(lecteur, porte)
+
+        # QUAND le Moteur d'Ouverture effectue une interrogation des lecteurs
+        moteurOuverture.interroger()
+
+        # ALORS le signal d'ouverture est envoyé à la porte
+        self.assertTrue(porte.nombre_ouverture_demandees > 0)
+

@@ -2,10 +2,11 @@ from collections import defaultdict
 from typing import Set, Tuple, Iterable, Dict
 from utils.IPorte import IPorte
 from utils.ILecteur import ILecteur
+from utils.badge import Badge
 
 
 class Lecteur:
-    def __init__(self, portes: Iterable[IPorte], badge_detecte: int | None):
+    def __init__(self, portes: Iterable[IPorte], badge_detecte: Badge | None):
         self.portes = portes
         self.badge_detecte = badge_detecte
 
