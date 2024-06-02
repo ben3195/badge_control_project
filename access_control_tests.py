@@ -278,5 +278,45 @@ class ControlAccess(unittest.TestCase):
         # QUAND le Moteur d'Ouverture effectue une interrogation des lecteurs
         moteurOuverture.interroger()
 
-        # ALORS le signal d'ouverture est envoyé à la porte
+        # ALORS le signal d'ouverture n'est pas envoyé à la porte
         self.assertFalse(porte.nombre_ouverture_demandees > 0)
+
+    def test_access_au_debut_de_restriction_temps(self):
+        # ETANT DONNE une Porte reliée à un Lecteur, ayant détecté un Badge avec une restriction de temps
+        # ET une règle de temps défini au début de l'intervalle de restriction
+        porte = PorteSpy()
+        lecteur = LecteurFake()
+        badge = Badge()
+        current_time = time(9,0)
+
+        lecteur.simuler_detection_badge(badge)
+
+        moteurOuverture = MoteurOuverture()
+        moteurOuverture.associer(lecteur, porte)
+        moteurOuverture.ajouter_regle(badge.numero, RegleAccesTemps(time(9, 0), time(17, 0), current_time))
+
+        # QUAND le Moteur d'Ouverture effectue une interrogation des lecteurs
+        moteurOuverture.interroger()
+
+        # ALORS le signal d'ouverture est envoyé à la porte
+        self.assertTrue(porte.nombre_ouverture_demandees > 0)
+
+    def test_access_a_la_fin_de_restriction_temps(self):
+        # ETANT DONNE une Porte reliée à un Lecteur, ayant détecté un Badge avec une restriction de temps
+        # ET une règle de temps défini à la fin de l'intervalle de restriction
+        porte = PorteSpy()
+        lecteur = LecteurFake()
+        badge = Badge()
+        current_time = time(17, 0)
+
+        lecteur.simuler_detection_badge(badge)
+
+        moteurOuverture = MoteurOuverture()
+        moteurOuverture.associer(lecteur, porte)
+        moteurOuverture.ajouter_regle(badge.numero, RegleAccesTemps(time(9, 0), time(17, 0), current_time))
+
+        # QUAND le Moteur d'Ouverture effectue une interrogation des lecteurs
+        moteurOuverture.interroger()
+
+        # ALORS le signal d'ouverture est envoyé à la porte
+        self.assertTrue(porte.nombre_ouverture_demandees > 0)
