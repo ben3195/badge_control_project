@@ -7,6 +7,7 @@ from utils.badge import Badge
 from utils.access_rules import RegleAccesParDefaut, RegleAccesTemps
 from datetime import datetime, time
 
+
 class ControlAccess(unittest.TestCase):
     def test_nominal(self):
         # ETANT DONNE une Porte reliée à un Lecteur, ayant détecté un Badge
@@ -241,17 +242,41 @@ class ControlAccess(unittest.TestCase):
         self.assertTrue(porte2.nombre_ouverture_demandees > 0)
 
     def test_badge_avec_restriction_temps(self):
+        # ETANT DONNE une Porte reliée à un Lecteur, ayant détecté un Badge avec une restriction de temps
+        # ET une règle de temps vérifiée
         porte = PorteSpy()
         lecteur = LecteurFake()
         badge = Badge()
-        current_time = time(12,00)
+        current_time = time(12, 00)
 
         lecteur.simuler_detection_badge(badge)
 
         moteurOuverture = MoteurOuverture()
         moteurOuverture.associer(lecteur, porte)
-        moteurOuverture.ajouter_regle(badge.numero, RegleAccesTemps(time(9,00), time(17,00), current_time))
+        moteurOuverture.ajouter_regle(badge.numero, RegleAccesTemps(time(9, 00), time(17, 00), current_time))
 
+        # QUAND le Moteur d'Ouverture effectue une interrogation des lecteurs
         moteurOuverture.interroger()
 
+        # ALORS le signal d'ouverture est envoyé à la porte
         self.assertTrue(porte.nombre_ouverture_demandees > 0)
+
+    def test_acces_refuse_badge_restrictions_temps(self):
+        # ETANT DONNE une Porte reliée à un Lecteur, ayant détecté un Badge avec une restriction de temps
+        # ET une règle de temps non vérifiée
+        porte = PorteSpy()
+        lecteur = LecteurFake()
+        badge = Badge()
+        current_time = time(8, 0)
+
+        lecteur.simuler_detection_badge(badge)
+
+        moteurOuverture = MoteurOuverture()
+        moteurOuverture.associer(lecteur, porte)
+        moteurOuverture.ajouter_regle(badge.numero, RegleAccesTemps(time(9, 0), time(17, 0), current_time))
+
+        # QUAND le Moteur d'Ouverture effectue une interrogation des lecteurs
+        moteurOuverture.interroger()
+
+        # ALORS le signal d'ouverture est envoyé à la porte
+        self.assertFalse(porte.nombre_ouverture_demandees > 0)
