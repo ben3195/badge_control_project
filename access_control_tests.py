@@ -342,3 +342,23 @@ class ControlAccess(unittest.TestCase):
 
         # ALORS le signal d'ouverture est envoyé à la porte
         self.assertTrue(porte.nombre_ouverture_demandees > 0)
+
+    def test_badge_passe_partout_ignore_restriction_temps(self):
+        # ETANT DONNE une Porte reliée à un Lecteur, ayant détecté un Badge passe-partout
+        # ET une règle d'accès en dehors des heures autorisées
+        porte = PorteSpy()
+        lecteur = LecteurFake()
+        badge = Badge(pass_all=True)
+
+        lecteur.simuler_detection_badge(badge)
+
+        current_time = time(8, 0)
+        moteurOuverture = MoteurOuverture()
+        moteurOuverture.associer(lecteur, porte)
+        moteurOuverture.ajouter_regle(badge.numero, RegleAccesTemps(time(9, 0), time(17, 0), current_time))
+
+        # QUAND le Moteur d'Ouverture effectue une interrogation des lecteurs
+        moteurOuverture.interroger()
+
+        # ALORS le signal d'ouverture est envoyé à la porte
+        self.assertTrue(porte.nombre_ouverture_demandees > 0)
