@@ -219,3 +219,23 @@ class ControlAccess(unittest.TestCase):
         # ALORS le signal d'ouverture n'est pas envoyé à la porte
         self.assertFalse(porte.nombre_ouverture_demandees > 0)
 
+    def test_badge_passe_partout_ouvre_plusieurs(self):
+        # ETANT DONNE deux Portes reliées à un Lecteur, ayant détecté un Badge passe-partout
+        # ET deux Portes reliées chacune à un Lecteur
+        porte1 = PorteSpy()
+        porte2 = PorteSpy()
+        lecteur = LecteurFake()
+        master_badge = Badge(pass_all=True)
+
+        lecteur.simuler_detection_badge(master_badge)
+
+        moteurOuverture = MoteurOuverture()
+        moteurOuverture.associer(lecteur, porte1)
+        moteurOuverture.associer(lecteur, porte2)
+
+        # QUAND le Moteur d'Ouverture effectue une interrogation des lecteurs
+        moteurOuverture.interroger()
+
+        # ALORS le signal d'ouverture est envoyé aux deux portes
+        self.assertTrue(porte1.nombre_ouverture_demandees > 0)
+        self.assertTrue(porte2.nombre_ouverture_demandees > 0)
